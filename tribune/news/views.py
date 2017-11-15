@@ -1,12 +1,14 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,Http404#import the httpresponse class from the django.http module reposible for returning reponse to the user.
 import datetime as dt
+from .models import Article
 
 #deleted the date function since all of that is now defined with the date filter
 
 def news_today(request):
 	date = dt.date.today()
-	return render(request,'all-news/today-news.html',{"date":date,})#pass in 3 arguments last one is a dictionary of values that we want to pass into the template the dictionary is referred to as the context in django
+	news = Article.todays_news()
+	return render(request,'all-news/today-news.html',{"date":date,"news":news})#pass in 3 arguments last one is a dictionary of values that we want to pass into the template the dictionary is referred to as the context in django
 
 def past_days_news(request,past_date):
 
