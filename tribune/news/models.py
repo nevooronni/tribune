@@ -35,12 +35,12 @@ class Article(models.Model):
 	editor = models.ForeignKey(Editor)#foreign key column defines one to many relationship to editor
 	tags = models.ManyToManyField(tags)#many to many relationship with the tags class
 	pub_date = models.DateTimeField(auto_now_add=True)#timestamp to establish when the articles were published 
-	
+	article_image = models.ImageField(upload_to = 'articles/')#image field takes upload_to argument defines where the image will be stored in the file system.
 	#def save_article(self):
 		#self.save()
 	def __str__(self):
 			return self.title		
-	
+
 	@classmethod
 	def todays_news(cls):
 		today = dt.date.today()#module to get todays date
@@ -52,4 +52,8 @@ class Article(models.Model):
 		news = cls.objects.filter(pub_date__date = date)
 		return news
 
+	@classmethod
+	def search_by_title(cls,search_term):
+		news = cls.objects.filter(title__icontains=search_term)#will filter our model data using the __icontains filter will check if any word in the title field of our articles matches the search_term 
 		
+		return news		

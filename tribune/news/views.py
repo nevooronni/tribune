@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse,Http404#import the httpresponse class from the django.http module reposible for returning reponse to the user.
+from django.http import HttpRequest,HttpResponse,Http404#import the httpresponse class from the django.http module reposible for returning reponse to the user.
 import datetime as dt
 from .models import Article
 
@@ -23,5 +23,26 @@ def past_days_news(request,past_date):
 
 	if date == dt.date.today():
 		return redirect(news_today)
-		
-	return render(request,'all-news/past-news.html',{"date":date})
+
+	news = Article.days_news(date)
+	return render(request,'all-news/past-news.html',{"date":date,"news":news})
+
+def search_results(request):
+
+	if 'article' in request.GET and request.GET["article"]:#we first check if the article query exists in our request.GET object
+		search_term = request.GET.get("article")#get the search term using the request.GET object
+		searched_articles = Article.search_by_title(search_term)#search the user input
+		message = f"{search_term}"
+
+		return render(request,'all-news/search.html',{"message":message,"articles":searched_articles})
+
+	else:
+		message = "You haven't searched for any term"
+		return render(request,'all-news/search.html',{"message":message})
+
+def article(request,article_id):#pass in artitcle id from url 
+	try:
+		article = Article.objects.get(id = article_id)#query db for article
+	except DoesNotExist:
+		raise Http404()
+	return render(request,"all-news/article.html",{"article":article})	
