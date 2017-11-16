@@ -24,7 +24,7 @@ def past_days_news(request,past_date):
 	if date == dt.date.today():
 		return redirect(news_today)
 
-	news = Article.days_news(date)
+	news = Article.day_news(date)
 	return render(request,'all-news/past-news.html',{"date":date,"news":news})
 
 def search_results(request):
@@ -43,6 +43,6 @@ def search_results(request):
 def article(request,article_id):#pass in artitcle id from url 
 	try:
 		article = Article.objects.get(id = article_id)#query db for article
-	except DoesNotExist:
+	except DoesNotExist:#catch the does not exist expection when we fail to find object with the id and throw a 404 error 
 		raise Http404()
 	return render(request,"all-news/article.html",{"article":article})	
